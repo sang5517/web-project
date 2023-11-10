@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>가을 신상자켓</h1>
+<table>
+    <tr class="text-center" th:each="product, loop :  ${paging}">
+        <td class="text-center">
+            <img src="https://search.pstatic.net/common/?src=https%3A%2F%2Fshopping-phinf.pstatic.net%2Fmain_8678212%2F86782120072.jpg&type=f372_372" alt="이미지 1">
+            <a th:href="@{|/product/detail/${product.id}|}" th:text="${product.name}"></a>
+            <span class="text-danger small ms-2"
+                  th:if="${#lists.size(product.productReviewList) > 0}"
+                  th:text="${#lists.size(product.productReviewList)}">
+                    </span>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap.min.css}">
+    <!-- sbb CSS -->
+    <link rel="stylesheet" type="text/css" th:href="@{/style.css}">
+    <style>
+        /* 추가 네비게이션 바 내용 배경색 수정 */
+    .offcanvas-body {
+        background-color: white; /* 내용 배경색을 원하는 색상으로 수정 */
+    }
+      /* 특정 부분에 배경 이미지 적용 */
+        .groundimage {
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            height: 750px; /* 이미지의 높이 설정 */
+            z-index: -1; /* 배경 이미지를 뒤로 이동시킴 */
+        }
+
+        .groundimage1 {
+            background-image: url('https://search.pstatic.net/sunny?src=https%3A%2F%2Fvague.kr%2Fweb%2Fproduct%2Fmedium%2F202311%2F3014dbebdf609899c9700c995f803721.gif&type=fff208_208');
+            margin-top: -56px; /* 네비게이션 바의 높이만큼 위로 이동 */
+        }
+
+        .groundimage2 {
+            background-image: url(https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMjEwMjVfMjUg%2FMDAxNjY2NzA3NzI1OTcx.OYiL7gj5QaMT6fvRUq7Oe_3s85O0R98RKwf9GcW3Mfgg.1I-ZKI2jTfMLpLY3FMCcubAr5Gy4fFy9bhOpAq6UBrQg.JPEG.tjsgurdl2%2FKakaoTalk_20221025_232124807_03.jpg&type=ff332_332);
+            margin-top: -56px; /* 네비게이션 바의 높이만큼 위로 이동 */
+        }
+
+        /* 추가된 스타일: 이미지를 옆으로 나란히 배치 */
+        .groundimage-container {
+            display: flex;
+        }
+
+
+            /* 수정된 스타일: 이미지 간 간격 없애기 */
+        .groundimage-container .groundimage {
+            flex: 1;
+            margin: 0;
+        }
+    </style>
+    <title>ilhafitofficial</title>
+</head>
+<body>
+<!-- 기존 네비게이션바 -->
+<nav th:replace="~{navbar :: navbarFragment}"></nav>
+
+<!-- 추가 네비게이션 바 -->
+<nav class="navbar navbar-white bg-white navbar-additional">
+    <div class="container-fluid">
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar"
+                aria-controls="offcanvasDarkNavbar" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar"
+             aria-labelledby="offcanvasDarkNavbarLabel">
+            <!-- 추가 네비게이션 바 내용 -->
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel"></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                        aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="navbar-nav justify-content-end flex-grow-1 pe-3" style="white">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" th:href="@{|/product/list?kw=${kw}&category=outer|}">outer</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{|/product/list?kw=${kw}&category=pants|}">pants</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link"th:href="@{|/product/list?kw=${kw}&category=shirts|}">shirts</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{|/product/list?kw=${kw}&category=top|}">top</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            상품검색
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-white">
+                            <li><a class="dropdown-item" href="#">Action</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <form class="d-flex mt-3" th:action="@{/product/search}" method="get">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="kw">
+                    <button class="btn btn-success" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</nav>
+<!-- 배경 이미지 적용 부분 -->
+<div class="groundimage-container">
+    <div class="groundimage groundimage1"></div>
+    <div class="groundimage groundimage2"></div>
+</div>
+<!-- 기본 템플릿 안에 삽입될 내용 Start -->
+<th:block layout:fragment="content"></th:block>
+<!-- 기본 템플릿 안에 삽입될 내용 End -->
+
+<!-- Bootstrap JS -->
+<script th:src="@{/bootstrap.min.js}"></script>
+
+<!-- 자바스크립트 Start -->
+<th:block layout:fragment="script"></th:block>
+<!-- 자바스크립트 End -->
+</body>
+</html>

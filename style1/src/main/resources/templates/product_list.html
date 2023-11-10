@@ -1,0 +1,88 @@
+<html layout:decorate="~{layout}">
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<div layout:fragment="content" class="container my-3">
+    <div class="row my-3">
+        <div class="col-6">
+            <div class="input-group">
+                <input type="text" id="search_kw" class="form-control" th:value="${kw}">
+                <button class="btn btn-outline-secondary" type="button" id="btn_search">찾기</button>
+            </div>
+        </div>
+    </div>
+<table class="table">
+    <thead class="table-dark">
+    <tr class="text-center">
+        <th>번호</th>
+        <th style="width:50%">제품명</th>
+        <th>글쓴이</th>
+        <th>등록일자</th>
+        <th>KWW</th>
+        <th>평균별점</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr class="text-center" th:each="product, loop :  ${paging}">
+        <td th:text="${paging.getTotalElements - (paging.number * paging.size) - loop.index}"></td>
+        <td class="text-center">
+            <a th:href="@{|/product/detail/${product.id}|}" th:text="${product.name}"></a>
+            <span class="text-danger small ms-2"
+                  th:if="${#lists.size(product.productReviewList) > 0}"
+                  th:text="${#lists.size(product.productReviewList)}">
+            </span>
+            <div>
+            <img th:src="@{|${product.imgPath}|}"style="width: 100px; height: 100px; overflow: hidden;">
+            </div>
+        </td>
+        <td><span th:if="${product.author != null}" th:text="${product.author.username}"></span></td>
+        <td th:text="${#temporals.format(product.createDate, 'yyyy-MM-dd HH:mm')}"></td>
+        <td th:text="${product.kww}"></td> <!-- 여기에 가격 추가 -->
+    </tr>
+    </tbody>
+</table>
+    <!-- 페이징처리 시작 -->
+    <div th:if="${!paging.isEmpty()}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${!paging.hasPrevious} ? 'disabled'">
+                <a class="page-link"
+                   href="javascript:void(0)" th:data-page="${paging.number-1}">
+                    <span>이전</span>
+                </a>
+            </li>
+            <li th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
+                th:if="${page >= paging.number-5 and page <= paging.number+5}"
+                th:classappend="${page == paging.number} ? 'active'"
+                class="page-item">
+                <a th:text="${page}" class="page-link" href="javascript:void(0)" th:data-page="${page}"></a>
+            </li>
+            <li class="page-item" th:classappend="${!paging.hasNext} ? 'disabled'">
+                <a class="page-link" href="javascript:void(0)" th:data-page="${paging.number+1}">
+                    <span>다음</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <!-- 페이징처리 끝 -->
+    <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/product/create}" class="btn btn-primary">제품등록</a>
+    <form th:action="@{/product/list}" method="get" id="searchForm">
+        <input type="hidden" id="kw" name="kw" th:value="${kw}">
+        <input type="hidden" id="page" name="page" th:value="${paging.number}">
+    </form>
+</div>
+<script layout:fragment="script" type='text/javascript'>
+    const page_elements = document.getElementsByClassName("page-link");
+    Array.from(page_elements).forEach(function(element) {
+        element.addEventListener('click', function() {
+            document.getElementById('page').value = this.dataset.page;
+            document.getElementById('searchForm').submit();
+        });
+    });
+    const btn_search = document.getElementById("btn_search");
+    btn_search.addEventListener('click', function() {
+        document.getElementById('kw').value = document.getElementById('search_kw').value;
+        document.getElementById('page').value = 0;  // 검색버튼을 클릭할 경우 0페이지부터 조회한다.
+        document.getElementById('searchForm').submit();
+    });
+</script>
+</html>

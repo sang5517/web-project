@@ -1,0 +1,107 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container my-3">
+    <!-- 질문 -->
+    <h2 class="border-bottom py-2" th:text="${product.name}"></h2>
+
+    <div class="card my-3">
+        <div class="card-body">
+            <img th:src="@{|${product.imgPath}|}" alt="제품 이미지"style="max-width: 100px; height: auto;">
+            <div class="card-text" th:utext="${@commonUtil.markdown(product.content)}"></div>
+            <div class="d-flex justify-content-end">
+                
+                <div class="badge bg-light text-dark p-2 text-start">
+                    <div class="mb-2">
+                        <span th:if="${product.author != null}" th:text="${product.author.username}"></span>
+                    </div>
+                    <div th:text="${#temporals.format(product.createDate, 'yyyy-MM-dd HH:mm')}"></div>
+                </div>
+            </div>
+            <div class="my-3">
+                <a href="javascript:void(0);" class="recommend btn btn-sm btn-outline-secondary"
+                   th:data-uri="@{|/product/vote/${product.id}|}">
+                    추천
+                    <span class="badge rounded-pill bg-success" th:text="${#lists.size(product.voter)}"></span>
+                </a>
+                <a th:href="@{|/product/modify/${product.id}|}" class="btn btn-sm btn-outline-secondary"
+                   sec:authorize="isAuthenticated()"
+                   th:if="${product.author != null and #authentication.getPrincipal().getUsername() == product.author.username}"
+                   th:text="수정"></a>
+                <a href="javascript:void(0);" th:data-uri="@{|/product/delete/${product.id}|}"
+                   class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
+                   th:if="${product.author != null and #authentication.getPrincipal().getUsername() == product.author.username}"
+                   th:text="삭제"></a>
+            </div>
+        </div>
+    </div>
+    <!-- 답변의 갯수 표시 -->
+    <h5 class="border-bottom my-3 py-2"
+        th:text="|${#lists.size(product.productReviewList)}개의 리뷰가 있습니다.|"></h5>
+    <!-- 답변 반복 시작 -->
+    <div class="card my-3" th:each="productReview : ${product.productReviewList}">
+        <a th:id="|productReview_${productReview.id}|"></a>
+        <div class="card-body">
+            <!-- 평점 표시 -->
+            <div class="mb-2">
+                <span></span>
+                <span th:utext="${'★'.repeat(productReview.rating) + '☆'.repeat(5 - productReview.rating)}"></span>
+            </div>
+            <!-- 후기 내용 및 기타 정보 -->
+            <div class="card-text" th:utext="${@commonUtil.markdown(productReview.content)}"></div>
+            <div class="my-3">
+                <a href="javascript:void(0);" class="recommend btn btn-sm btn-outline-secondary"
+                   th:data-uri="@{|/productReview/vote/${productReview.id}|}">
+                    추천
+                    <span class="badge rounded-pill bg-success" th:text="${#lists.size(productReview.voter)}"></span>
+                </a>
+                <a th:href="@{|/productReview/modify/${productReview.id}|}" class="btn btn-sm btn-outline-secondary"
+                   sec:authorize="isAuthenticated()"
+                   th:if="${productReview.author != null and #authentication.getPrincipal().getUsername() == productReview.author.username}"
+                   th:text="수정"></a>
+                <a href="javascript:void(0);" th:data-uri="@{|/productReview/delete/${productReview.id}|}"
+                   class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
+                   th:if="${productReview.author != null and #authentication.getPrincipal().getUsername() == productReview.author.username}"
+                   th:text="삭제"></a>
+            </div>
+        </div>
+    </div>
+    <!-- 답변 반복 끝  -->
+    <!-- 답변 작성 -->
+    <form th:action="@{|/productReview/create/${product.id}|}" th:object="${productReviewForm}" method="post" class="my-3">
+        <div th:replace="~{form_errors :: formErrorsFragment}"></div>
+        <!-- 평점 선택 드롭다운 -->
+        <div class="form-group">
+            <label for="rating">별점:</label>
+            <select class="form-control" id="rating" name="rating" th:field="*{rating}">
+                <option value="1">★☆☆☆☆</option>
+                <option value="2">★★☆☆☆</option>
+                <option value="3">★★★☆☆</option>
+                <option value="4">★★★★☆</option>
+                <option value="5">★★★★★</option>
+            </select>
+        </div>
+        <!-- 텍스트 에어리어 -->
+        <textarea sec:authorize="isAnonymous()" disabled th:field="*{content}" class="form-control" rows="10"></textarea>
+        <textarea sec:authorize="isAuthenticated()" th:field="*{content}" class="form-control" rows="10"></textarea>
+        <!-- 제품후기 등록 버튼 -->
+        <input type="submit" value="제품후기등록" class="btn btn-primary my-2">
+    </form>
+</div>
+<script layout:fragment="script" type='text/javascript'>
+    const delete_elements = document.getElementsByClassName("delete");
+    Array.from(delete_elements).forEach(function(element) {
+        element.addEventListener('click', function() {
+            if(confirm("정말로 삭제하시겠습니까?")) {
+                location.href = this.dataset.uri;
+            };
+        });
+    });
+    const recommend_elements = document.getElementsByClassName("recommend");
+Array.from(recommend_elements).forEach(function(element) {
+    element.addEventListener('click', function() {
+        if(confirm("정말로 추천하시겠습니까?")) {
+            location.href = this.dataset.uri;
+        };
+    });
+});
+</script>
+</html>
